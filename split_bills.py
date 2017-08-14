@@ -1,10 +1,8 @@
-import argparse
-
-def read_transaction_file(fhandle):
+def parse_transactions(lines):
     tip = 0
     transactions = [];
 
-    for line in fhandle:
+    for line in lines:
         elems = line.strip().split(',')
         # the first elem is the price of the item in the transaction
         price = float(elems[0])
@@ -15,7 +13,15 @@ def read_transaction_file(fhandle):
             tip = price
         else:
             transactions.append( {'price': price, 'participants': participants} )
+            
     return (transactions, tip)
+    
+def get_baked_list():
+  ret = """14.12,!tip
+  11.7,person1
+  21.24,person2
+  20.34,person3"""
+  return ret.split('\n')
 
 def compute_subtotals(transactions):
     subtotals = {}
@@ -32,12 +38,7 @@ def compute_contribution(subtotals, common):
     return subcontribs
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('fhandle', type=argparse.FileType('r'))
-    args = parser.parse_args()
-    fhandle = args.fhandle
-
-    transactions, tip_total = read_transaction_file(fhandle)
+    transactions, tip_total = parse_transactions(get_baked_list())
     subtotal_pp = compute_subtotals(transactions)
 
     subtotal = sum(subtotal_pp.values())
